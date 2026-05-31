@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_biblioteca
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: biblioteca_db
+      POSTGRES_USER: biblioteca_user
+      POSTGRES_PASSWORD: biblioteca_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+    networks:
+      - bd_network
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: pgadmin_biblioteca
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@biblioteca.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "8081:80"
+    depends_on:
+      - postgres
+    networks:
+      - bd_network
+
+volumes:
+  postgres_data:
+
+networks:
+  bd_network:
+    driver: bridge
